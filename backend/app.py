@@ -27,7 +27,12 @@ def start_scan():
 @app.route('/api/status', methods=['GET'])
 def get_status():
     is_running = scan_engine.scan_manager.is_scanning()
-    return jsonify({"is_scanning": is_running})
+    real_time_data = scan_engine.scan_manager.get_realtime_data()
+    return jsonify({
+        "is_scanning": is_running,
+        "logs": real_time_data.get("log", []),
+        "current_findings": real_time_data.get("findings", [])
+    })
 
 @app.route('/api/history', methods=['GET'])
 def get_history():

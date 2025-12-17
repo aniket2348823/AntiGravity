@@ -3,136 +3,106 @@ import time
 import db
 import requests
 import json
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
+from bs4 import BeautifulSoup
+from antigravity import ScanOrchestrator
+import asyncio
 
 class ScanManager:
     def __init__(self):
         self.lock = threading.Lock()
         self.current_scan_thread = None
+        self.scan_log = []
+        self.current_findings = []
 
     def is_scanning(self):
         return self.lock.locked()
 
+    def get_realtime_data(self):
+        """Returns current log and findings for real-time UI updates"""
+        return {
+            "log": self.scan_log[-50:], # Return last 50 logs
+            "findings": self.current_findings
+        }
+
     def start_scan(self, target_url):
         if self.lock.acquire(blocking=False):
+            self.scan_log = [] # Reset log
+            self.current_findings = [] # Reset findings
             self.current_scan_thread = threading.Thread(target=self._run_scan, args=(target_url.strip(),))
             self.current_scan_thread.start()
             return True
         return False
 
+    def _log(self, message):
+        timestamp = time.strftime("%H:%M:%S")
+        entry = f"[{timestamp}] {message}"
+        print(entry)
+        self.scan_log.append(entry)
+
+    def _crawl(self, start_url, max_depth=2):
+        self._log(f"Starting crawler on {start_url} (Depth: {max_depth})")
+        visited = set()
+        queue = [(start_url, 0)]
+        found_links = set()
+        
+        domain = urlparse(start_url).netloc
+
+        while queue:
+            url, depth = queue.pop(0)
+            if url in visited or depth > max_depth:
+                continue
+            visited.add(url)
+            found_links.add(url)
+
+            try:
+                self._log(f"Crawling: {url}")
+                res = requests.get(url, timeout=5, verify=False)
+                if res.status_code == 200:
+                    soup = BeautifulSoup(res.text, 'html.parser')
+                    for link in soup.find_all('a', href=True):
+                        href = link['href']
+                        full_url = urljoin(url, href)
+                        # Only crawl internal links
+                        if urlparse(full_url).netloc == domain:
+                            if full_url not in visited:
+                                queue.append((full_url, depth + 1))
+            except Exception as e:
+                self._log(f"Failed to crawl {url}: {e}")
+        
+        return list(found_links)
+
     def _run_scan(self, target_url):
         scan_id = None
         try:
+            self._log(f"Initializing Antigravity Engine for {target_url}")
             scan_id = db.add_scan(target_url) 
-            print(f"Starting scan {scan_id} on {target_url}")
-            findings = []
             
-            # Helper for robust requests
-            def safe_get(url, timeout=10):
-                try:
-                    return requests.get(url, timeout=timeout, verify=False), None
-                except requests.RequestException as e:
-                    return None, str(e)
-            
-            # 1. Connectivity Check & Header Analysis
-            res, error = safe_get(target_url)
-            if error:
-                # If connection failed, we can't do much more. Report critical error.
-                findings.append({
-                    "name": "Connection Failed",
-                    "severity": "Critical",
-                    "description": f"Could not connect to target: {error}"
-                })
-            else:
-                # Headers
-                headers = res.headers
-                required_headers = {
-                    'Content-Security-Policy': 'High',
-                    'Strict-Transport-Security': 'High',
-                    'X-Frame-Options': 'Medium',
-                    'X-Content-Type-Options': 'Medium'
-                }
-                for header, severity in required_headers.items():
-                    if header not in headers:
-                        findings.append({
-                            "name": f"Missing Header: {header}",
-                            "severity": severity,
-                            "description": f"The {header} security header is missing."
-                        })
-                if 'Server' in headers:
-                    findings.append({
-                        "name": f"Server Info Leak",
-                        "severity": "Low",
-                        "description": f"Server header exposed: {headers['Server']}"
-                    })
-
-                # 2. Method Analysis
-                methods = ['OPTIONS', 'PUT', 'DELETE', 'TRACE']
-                for method in methods:
-                    try:
-                        m_res = requests.request(method, target_url, timeout=5, verify=False)
-                        if m_res.status_code < 405 and m_res.status_code != 404:
-                            findings.append({
-                                "name": f"Unsafe Method Enabled: {method}",
-                                "severity": "Medium",
-                                "description": f"Method {method} returned status {m_res.status_code}"
-                            })
-                    except: pass
-
-                # 3. Directory Enumeration
-                path_severity = {
-                    '/.env': 'Critical',
-                    '/.git': 'Critical',
-                    '/backup': 'High',
-                    '/config': 'High',
-                    '/admin': 'Medium',
-                    '/robots.txt': 'Low'
-                }
+            # Callbacks to bridge to existing UI
+            def on_log_callback(msg):
+                self._log(msg)
                 
-                for path, severity in path_severity.items():
-                    full_url = urljoin(target_url, path)
-                    d_res, _ = safe_get(full_url, timeout=5)
-                    if d_res and d_res.status_code == 200:
-                        findings.append({
-                            "name": f"Sensitive File Found: {path}",
-                            "severity": severity,
-                            "description": f"Accessible file or directory found at {path}. Risk level depends on content."
-                        })
+            def on_finding_callback(finding):
+                 self.current_findings.append(finding)
 
-                # 4. Basic XSS Check (Reflected)
-                xss_payload = "<script>alert('XSS')</script>"
-                # Try appending to URL query
-                xss_url = f"{target_url}?q={xss_payload}"
-                x_res, _ = safe_get(xss_url, timeout=5)
-                if x_res and xss_payload in x_res.text:
-                    findings.append({
-                        "name": "Reflected XSS Vulnerability",
-                        "severity": "High",
-                        "description": "The application reflects user input without sanitization (Basic Test)."
-                    })
-
-                # 5. Basic SQL Injection Check
-                sqli_payload = "' OR '1'='1"
-                sqli_url = f"{target_url}?id={sqli_payload}"
-                s_res, _ = safe_get(sqli_url, timeout=5)
-                if s_res and ("syntax error" in s_res.text.lower() or "sql" in s_res.text.lower()):
-                     findings.append({
-                        "name": "Potential SQL Injection",
-                        "severity": "High",
-                        "description": "Database error messages detected in response to SQL payload."
-                    })
-
-
-            results = {
-                "vulnerabilities": findings,
-                "target": target_url
-            }
+            orchestrator = ScanOrchestrator(
+                target_url, 
+                on_log=on_log_callback, 
+                on_finding=on_finding_callback
+            )
             
-            db.update_scan_status(scan_id, "Completed", results)
-            print(f"Scan {scan_id} completed with {len(findings)} findings.")
+            # Run async scan synchronously in this thread
+            # Since this is a dedicated thread, we can use asyncio.run()
+            results = asyncio.run(orchestrator.run_scan())
+            
+            db.update_scan_status(scan_id, "Completed", {
+                "vulnerabilities": self.current_findings,
+                "target": target_url
+            })
+            self._log(f"Scan completed. Total findings: {len(self.current_findings)}")
             
         except Exception as e:
-            print(f"Scan failed: {e}")
+            self._log(f"Scan process error: {e}")
             if scan_id:
                  db.update_scan_status(scan_id, "Failed", {"error": str(e)})
         finally:

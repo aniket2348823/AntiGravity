@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
 function App() {
@@ -6,12 +6,17 @@ function App() {
     const [history, setHistory] = useState([])
     const [statusMessage, setStatusMessage] = useState('')
     const [targetUrl, setTargetUrl] = useState('')
+    const [logs, setLogs] = useState([])
+    const logsEndRef = useRef(null)
 
     const fetchStatus = async () => {
         try {
             const res = await fetch('/api/status')
             const data = await res.json()
             setIsScanning(data.is_scanning)
+            if (data.logs) {
+                setLogs(data.logs)
+            }
         } catch (err) {
             console.error("Failed to fetch status", err)
         }
@@ -33,9 +38,13 @@ function App() {
         const interval = setInterval(() => {
             fetchStatus()
             fetchHistory() // Polling for updates
-        }, 2000)
+        }, 1000) // Faster polling for real-time feel
         return () => clearInterval(interval)
     }, [])
+
+    useEffect(() => {
+        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [logs])
 
     const startScan = async () => {
         if (!targetUrl) {
@@ -44,6 +53,7 @@ function App() {
         }
         try {
             setStatusMessage("Starting scan...")
+            setLogs([]) // Clear previous logs
             const res = await fetch('/api/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -69,27 +79,42 @@ function App() {
 
     return (
         <div className="container">
-            <h1>API Endpoint Scanner</h1>
+            <h1>AntiGravity Scanner (Advanced)</h1>
 
-            <div className="card">
-                <h2>Control Panel</h2>
-                <div className="input-group">
-                    <input
-                        type="text"
-                        placeholder="Enter Target URL (e.g. https://google.com)"
-                        value={targetUrl}
-                        onChange={(e) => setTargetUrl(e.target.value)}
-                        disabled={isScanning}
-                    />
+            <div className="grid">
+                <div className="card control-panel">
+                    <h2>Control Center</h2>
+                    <div className="input-group">
+                        <input
+                            type="text"
+                            placeholder="Enter Target URL (e.g. https://testphp.vulnweb.com)"
+                            value={targetUrl}
+                            onChange={(e) => setTargetUrl(e.target.value)}
+                            disabled={isScanning}
+                        />
+                    </div>
+
+                    <div className="actions">
+                        <button onClick={startScan} disabled={isScanning} className="start-btn">
+                            {isScanning ? 'Scanning In Progress...' : '🚀 Launch Active Scan'}
+                        </button>
+                    </div>
+                    {statusMessage && <p className="message">{statusMessage}</p>}
                 </div>
-                <p>Status: {isScanning ? <span className="running">Running</span> : <span className="idle">Idle</span>}</p>
-                <button onClick={startScan} disabled={isScanning}>
-                    {isScanning ? 'Scan in Progress...' : 'Start New Scan'}
-                </button>
-                {statusMessage && <p className="message">{statusMessage}</p>}
+
+                <div className="card console-card">
+                    <h2>Live Scan Console</h2>
+                    <div className="console-window">
+                        {logs.length === 0 && <span className="console-placeholder">Waiting for scan tasks...</span>}
+                        {logs.map((log, index) => (
+                            <div key={index} className="log-entry">{log}</div>
+                        ))}
+                        <div ref={logsEndRef} />
+                    </div>
+                </div>
             </div>
 
-            <div className="card">
+            <div className="card full-width">
                 <h2>Scan History</h2>
                 <table>
                     <thead>

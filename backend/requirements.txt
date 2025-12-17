@@ -2,3 +2,8 @@ flask
 flask-cors
 fpdf
 requests
+beautifulsoup4
+aiohttp
+aiolimiter
+aiodns
+brotli
