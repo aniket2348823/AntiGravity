@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: antigravity-backend
+    runtime: python
+    region: singapore # Optional, pick closest
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PORT
+        value: 10000
