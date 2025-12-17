@@ -9,9 +9,12 @@ function App() {
     const [logs, setLogs] = useState([])
     const logsEndRef = useRef(null)
 
+    // Use Prod URL if Env Var is missing (Fallback for easy deployment)
+    const API_URL = import.meta.env.VITE_API_URL || 'https://antigravity-backend.onrender.com'
+
     const fetchStatus = async () => {
         try {
-            const res = await fetch('/api/status')
+            const res = await fetch(`${API_URL}/api/status`)
             const data = await res.json()
             setIsScanning(data.is_scanning)
             if (data.logs) {
@@ -24,7 +27,7 @@ function App() {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch('/api/history')
+            const res = await fetch(`${API_URL}/api/history`)
             const data = await res.json()
             setHistory(data)
         } catch (err) {
@@ -54,7 +57,7 @@ function App() {
         try {
             setStatusMessage("Starting scan...")
             setLogs([]) // Clear previous logs
-            const res = await fetch('/api/scan', {
+            const res = await fetch(`${API_URL}/api/scan`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ target_url: targetUrl })
@@ -74,7 +77,7 @@ function App() {
     }
 
     const downloadReport = (scanId) => {
-        window.open(`/api/report/${scanId}`, '_blank')
+        window.open(`${API_URL}/api/report/${scanId}`, '_blank')
     }
 
     return (
