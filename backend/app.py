@@ -11,6 +11,10 @@ CORS(app)
 # Initialize DB
 db.init_db()
 
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({"status": "Antigravity Scanner Backend is Online", "version": "2.0.0"})
+
 @app.route('/api/scan', methods=['POST'])
 def start_scan():
     data = request.json
