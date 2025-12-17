@@ -6,7 +6,7 @@ import pdf_generator
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Initialize DB
 db.init_db()
