@@ -1,0 +1,21 @@
+service: antigravity-swarm-warhead
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1 # Deploy to multiple regions (us-west-2, eu-central-1, etc.)
+  stage: prod
+  memorySize: 512 # Optimized for SimHash calculations
+  timeout: 30 # Lambda max execution for deep state-machine logic
+  environment:
+    AO_MODE: "WARHEAD"
+    PROXY_ROTATION: "ACTIVE"
+
+functions:
+  shredder:
+    handler: handler.orchestrate_attack
+    events:
+      - http:
+          path: /execute
+          method: post
+    # VPC configuration can be added here for localized enterprise testing

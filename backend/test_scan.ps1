@@ -1,4 +1,4 @@
-$target = "http://localhost:5050"
+$target = "http://localhost:5051"
 $scanApi = "http://localhost:5000/api/scan"
 $statusApi = "http://localhost:5000/api/status"
 $historyApi = "http://localhost:5000/api/history"
@@ -9,7 +9,8 @@ $body = @{ target_url = $target } | ConvertTo-Json
 try {
     $response = Invoke-RestMethod -Uri $scanApi -Method Post -Body $body -ContentType "application/json"
     Write-Host "Scan started: $($response.message)"
-} catch {
+}
+catch {
     Write-Error "Failed to start scan: $_"
     exit 1
 }
@@ -28,7 +29,8 @@ Do {
 
 if ($status.is_scanning) {
     Write-Host "Scan timed out or is taking too long."
-} else {
+}
+else {
     Write-Host "Scan Completed!"
 }
 
@@ -49,9 +51,11 @@ if ($history.Count -gt 0) {
     try {
         Invoke-WebRequest -Uri $reportUrl -OutFile "test_report.pdf"
         Write-Host "Report downloaded to test_report.pdf"
-    } catch {
-       Write-Error "Failed to download report: $_"
     }
-} else {
+    catch {
+        Write-Error "Failed to download report: $_"
+    }
+}
+else {
     Write-Host "No history found?"
 }

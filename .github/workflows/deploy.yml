@@ -1,0 +1,39 @@
+name: Hydra Global Swarm Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  id-token: write # Required for requesting the JWT
+  contents: read  # Required for actions/checkout
+
+jobs:
+  deploy-global:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Deploy to multiple regions for maximum IP diversity
+        region: [us-east-1, us-west-2, eu-central-1, ap-south-1]
+    
+    steps:
+      - name: Checkout Source Map Archeology
+        uses: actions/checkout@v4
+
+      - name: Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Serverless Framework
+        run: npm install -g serverless
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::000000000000:role/Antigravity-Swarm-Role # UPDATE THIS WITH YOUR ROLE ARN
+          aws-region: ${{ matrix.region }}
+
+      - name: Deploy Warhead to ${{ matrix.region }}
+        run: sls deploy --region ${{ matrix.region }} --stage prod

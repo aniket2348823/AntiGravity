@@ -55,7 +55,7 @@ def get_report(scan_id):
     
     pdf_generator.generate_pdf(scan, report_path)
     
-    return send_file(report_path, as_attachment=True, download_name=report_filename)
+    return send_file(report_path, as_attachment=True, download_name=report_filename, mimetype='application/pdf')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

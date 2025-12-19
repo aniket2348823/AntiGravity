@@ -40,37 +40,7 @@ class ScanManager:
         print(entry)
         self.scan_log.append(entry)
 
-    def _crawl(self, start_url, max_depth=2):
-        self._log(f"Starting crawler on {start_url} (Depth: {max_depth})")
-        visited = set()
-        queue = [(start_url, 0)]
-        found_links = set()
-        
-        domain = urlparse(start_url).netloc
 
-        while queue:
-            url, depth = queue.pop(0)
-            if url in visited or depth > max_depth:
-                continue
-            visited.add(url)
-            found_links.add(url)
-
-            try:
-                self._log(f"Crawling: {url}")
-                res = requests.get(url, timeout=5, verify=False)
-                if res.status_code == 200:
-                    soup = BeautifulSoup(res.text, 'html.parser')
-                    for link in soup.find_all('a', href=True):
-                        href = link['href']
-                        full_url = urljoin(url, href)
-                        # Only crawl internal links
-                        if urlparse(full_url).netloc == domain:
-                            if full_url not in visited:
-                                queue.append((full_url, depth + 1))
-            except Exception as e:
-                self._log(f"Failed to crawl {url}: {e}")
-        
-        return list(found_links)
 
     def _run_scan(self, target_url):
         scan_id = None
@@ -92,13 +62,18 @@ class ScanManager:
             )
             
             # Run async scan synchronously in this thread
-            # Since this is a dedicated thread, we can use asyncio.run()
             results = asyncio.run(orchestrator.run_scan())
             
-            db.update_scan_status(scan_id, "Completed", {
-                "vulnerabilities": self.current_findings,
-                "target": target_url
-            })
+            # Strict JSON Schema for Reporting
+            final_report = {
+                "Scan_Report": {
+                    "Target": target_url,
+                    "Architecture": "REST / GraphQL", # Placeholder or could be inferred
+                    "Vulnerabilities": self.current_findings
+                }
+            }
+            
+            db.update_scan_status(scan_id, "Completed", final_report)
             self._log(f"Scan completed. Total findings: {len(self.current_findings)}")
             
         except Exception as e:

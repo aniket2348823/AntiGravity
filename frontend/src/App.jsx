@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import Dashboard from './components/Dashboard';
+import { Shield, Search, AlertTriangle, FileText, Activity } from 'lucide-react';
 import './App.css'
 
 function App() {
@@ -77,12 +79,15 @@ function App() {
     }
 
     const downloadReport = (scanId) => {
-        window.open(`${API_URL}/api/report/${scanId}`, '_blank')
+        window.location.href = `${API_URL}/api/report/${scanId}`
     }
 
     return (
         <div className="container">
             <h1>AntiGravity Scanner (Advanced)</h1>
+
+            {/* V60.0 Sovereign Midnight Cyber Dashboard */}
+            <Dashboard />
 
             <div className="grid">
                 <div className="card control-panel">
@@ -145,7 +150,7 @@ function App() {
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div >
     )
 }
 
