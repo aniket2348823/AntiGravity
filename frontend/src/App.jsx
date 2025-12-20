@@ -12,7 +12,8 @@ function App() {
     const logsEndRef = useRef(null)
 
     // Use Prod URL if Env Var is missing (Fallback for easy deployment)
-    const API_URL = import.meta.env.VITE_API_URL || 'https://antigravity-backend.onrender.com'
+    // Use Prod URL if Env Var is missing (Fallback for easy deployment)
+    const API_URL = '' // Use relative path to leverage Vite proxy
 
     const fetchStatus = async () => {
         try {
@@ -79,7 +80,13 @@ function App() {
     }
 
     const downloadReport = (scanId) => {
-        window.location.href = `${API_URL}/api/report/${scanId}`
+        const url = `${API_URL}/api/report/${scanId}`;
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', '');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     return (

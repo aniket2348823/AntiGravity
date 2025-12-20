@@ -12,7 +12,7 @@ const Dashboard = () => {
         const fetchTelemetry = async () => {
             try {
                 // Fetch from the local Antigravity Backend (Singularity API)
-                const res = await fetch('http://127.0.0.1:5000/api/status');
+                const res = await fetch('/api/status');
                 const data = await res.json();
 
                 if (data.current_findings) {
@@ -116,10 +116,16 @@ const Dashboard = () => {
                     <button
                         onClick={async () => {
                             try {
-                                const res = await fetch('http://127.0.0.1:5000/api/history');
+                                const res = await fetch('/api/history');
                                 const history = await res.json();
                                 if (history.length > 0) {
-                                    window.location.href = `http://127.0.0.1:5000/api/report/${history[0].id}`;
+                                    const url = `/api/report/${history[0].id}`;
+                                    const link = document.createElement('a');
+                                    link.href = url;
+                                    link.setAttribute('download', '');
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
                                 } else {
                                     alert("No scan history found.");
                                 }

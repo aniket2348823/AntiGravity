@@ -593,18 +593,30 @@
         if (data.is_scanning) {
           countEl.innerText = '1';
           statusEl.innerText = 'Scanning...';
+          let logsHtml = '<div class="flex flex-col gap-1 p-4 font-mono text-xs h-full">';
+          if (data.current_findings && data.current_findings.length > 0) {
+            data.current_findings.forEach(f => {
+              let color = f.Severity === 'Critical' ? 'text-red-500' : 'text-green-500';
+              logsHtml += `<div class="${color} border-b border-gray-800 pb-1 mb-1">
+                                    <span class="font-bold">[${f.Type}]</span> 
+                                    <span class="text-gray-400">${f.Endpoint || 'Unknown'}</span>
+                                    <span class="float-right">${f.Severity}</span>
+                                </div>`;
+            });
+          } else {
+            logsHtml += '<div class="text-green-500 animate-pulse">Initializing Scan Vectors...</div>';
+          }
+          logsHtml += '</div>';
+
           container.innerHTML = `
-                         <div class="p-5 border-b border-[#e5e7eb] dark:border-[#282e39]">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="bg-primary/10 p-2 rounded-lg text-primary animate-pulse"><span class="material-symbols-outlined text-[20px]">wifi_tethering</span></div>
-                                    <div><h3 class="font-bold text-slate-900 dark:text-white text-sm">Target Scan</h3><p class="text-xs text-[#64748b] dark:text-[#9da6b9]">Active Analysis</p></div>
-                                </div>
-                                <span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">RUNNING</span>
-                            </div>
-                            <div class="w-full bg-[#f1f5f9] dark:bg-[#282e39] rounded-full h-2 mb-2"><div class="bg-primary h-2 rounded-full relative" style="width: 60%"><div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 size-3 bg-white dark:bg-[#1c212c] border-2 border-primary rounded-full shadow"></div></div></div>
-                        </div>
-                    `;
+                <div class="px-5 py-3 border-b border-[#e5e7eb] dark:border-[#282e39] bg-surface-dark flex justify-between items-center">
+                    <span class="text-xs font-bold text-primary">LIVE CONSOLE STREAM</span>
+                    <span class="animate-pulse flex h-2 w-2 rounded-full bg-green-500"></span>
+                </div>
+                <div class="overflow-y-auto bg-black border-t border-gray-800" style="height: 300px;">
+                    ${logsHtml}
+                </div>
+            `;
           dot.classList.remove('bg-emerald-500'); dot.classList.add('bg-orange-500');
           ping.classList.remove('bg-emerald-400'); ping.classList.add('bg-orange-400');
         } else {
@@ -644,7 +656,7 @@
                         <td class="py-4 px-6 text-sm text-[#5c6475]">${new Date(scan.timestamp).toLocaleString()}</td>
                         <td class="py-4 px-6">
                             ${scan.status === 'Completed' ?
-              `<button onclick="window.open('/api/report/${scan.id}', '_blank')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors text-xs font-bold">
+              `<button onclick="downloadReport('${scan.id}')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors text-xs font-bold">
                                     <span class="material-symbols-outlined text-[16px]">download</span> PDF
                                 </button>` : ''}
                         </td>
@@ -657,6 +669,45 @@
     }
 
 
+
+    async function downloadReport(scanId) {
+      try {
+        // 1. Fetch the data as a Blob first
+        const response = await fetch(`/api/report/${scanId}`);
+        if (!response.ok) throw new Error("Report generation failed");
+        const blob = await response.blob();
+        const filename = `report_${scanId}.pdf`;
+
+        // 2. Try the Modern "Save As" Picker (File System Access API)
+        // This guarantees a popup window asking where to save (User Priority #1).
+        if (window.showSaveFilePicker) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [{
+                description: 'PDF Document',
+                accept: { 'application/pdf': ['.pdf'] },
+              }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            return; // Success, operation complete
+          } catch (err) {
+            // Fail silently if user cancelled the picker
+            if (err.name === 'AbortError') return;
+            console.warn("Save picker failed/skipped, falling back", err);
+          }
+        }
+
+        // If showSaveFilePicker is not supported or failed, alert the user.
+        alert("Your browser does not support the File System Access API needed to save the report directly. Please try a modern browser like Chrome or Edge.");
+
+      } catch (err) {
+        console.error("Download Error:", err);
+        alert("Could not download report: " + err.message);
+      }
+    }
 
     async function startScan() {
       const targetUrl = document.getElementById('target-input').value;
