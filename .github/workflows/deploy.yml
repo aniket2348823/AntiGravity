@@ -1,4 +1,4 @@
-name: Hydra Global Swarm Deploy
+name: Antigravity Cloud Deployment
 
 on:
   push:
