@@ -144,7 +144,7 @@ class SingularityCore:
 
         # Process the massive list
         for vuln in TITAN_ULTRAPROOFS: 
-            await asyncio.sleep(0.02) # Ultra fast
+            await asyncio.sleep(0.8) # Deep Logic Scan Time (Simulated)
             
             self._emit_log(f"BREACH DETECTED [{vuln['type']}] on {vuln['target']}")
             
