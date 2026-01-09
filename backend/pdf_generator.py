@@ -137,6 +137,51 @@ def generate_pdf(scan_data, output_path):
             pdf.cell(0, 6, pdf.safe_text(endpoint), 0, 1)
             pdf.cell(40, 6, " * Vector:", 0)
             pdf.cell(0, 6, "Aether-Titan v100 Omega (XDP-Photonic Bypass)", 0, 1)
+
+            pdf.cell(40, 6, " * Vector:", 0)
+            pdf.cell(0, 6, "Aether-Titan v100 Omega (XDP-Photonic Bypass)", 0, 1)
+
+            # CVSS 4.0 Vector Calculation & Justification (Sovereign Standard)
+            # Default
+            cvss_vec = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N" 
+            cvss_just = "Base High: Network-accessible vulnerability with significant impact on the vulnerable system."
+
+            if "SQL" in name or "RCE" in name or "Command" in name:
+                # Critical: Total compromise of Vulnerable + Subsequent Systems
+                cvss_vec = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H"
+                cvss_just = "Critical: Full compromise of Vulnerable System (Server) allows lateral movement to Subsequent Systems."
+            elif "XSS" in name:
+                # Medium/High: UI Required, Impact on Subsequent System (Browser)
+                cvss_vec = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:N/VI:N/VA:N/SC:L/SI:L/SA:N"
+                cvss_just = "Medium: User Interaction (Active) required. Impact primarily affects the Subsequent System (User Session)."
+            elif "IDOR" in name or "Privilege" in name:
+                # High: Low Privileges Required
+                cvss_vec = "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N"
+                cvss_just = "High: Valid User Credentials (PR:L) required to access unauthorized data (Confidentiality/Integrity)."
+            elif "Path" in name or "Config" in name or "Exposed" in name or "Leak" in name:
+                # High: Confidentiality Loss (VC:H)
+                cvss_vec = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+                cvss_just = "High: Direct unauthorized access to sensitive configuration data (Confidentiality Impact)."
+            elif "Race" in name or "Time" in name:
+                # High: Attack Requirements Present (Timing)
+                cvss_vec = "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+                cvss_just = "High: Attack Requirements Present (AT:P). Exploitation relies on precise temporal execution windows."
+            elif "Auth" in name or "JWT" in name:
+                # Critical: Auth Bypass
+                cvss_vec = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:N/SC:H/SI:H/SA:H"
+                cvss_just = "Critical: Authentication mechanism failure impacts both Server (Vulnerable) and User Data (Subsequent)."
+
+            pdf.cell(40, 6, " * CVSS Vector:", 0)
+            pdf.set_font('Courier', '', 8)
+            pdf.cell(0, 6, pdf.safe_text(cvss_vec), 0, 1)
+            pdf.set_font('Arial', '', 10)
+            
+            # Metric Justification
+            pdf.cell(40, 6, " * Metric Choice:", 0)
+            pdf.set_font('Arial', 'I', 9)
+            pdf.cell(0, 6, pdf.safe_text(cvss_just), 0, 1)
+            pdf.set_font('Arial', '', 10)
+
             pdf.ln(5)
 
             # 2. Technical Vulnerability Description
