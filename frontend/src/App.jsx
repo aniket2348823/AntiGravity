@@ -12,7 +12,6 @@ function App() {
     const logsEndRef = useRef(null)
 
     // Use Prod URL if Env Var is missing (Fallback for easy deployment)
-    // Use Prod URL if Env Var is missing (Fallback for easy deployment)
     const API_URL = '' // Use relative path to leverage Vite proxy
 
     const fetchStatus = async () => {
@@ -58,7 +57,7 @@ function App() {
             return
         }
         try {
-            setStatusMessage("Starting scan...")
+            setStatusMessage("Inducing Singularity...")
             setLogs([]) // Clear previous logs
             const res = await fetch(`${API_URL}/api/scan`, {
                 method: 'POST',
@@ -66,12 +65,12 @@ function App() {
                 body: JSON.stringify({ target_url: targetUrl })
             })
             if (res.status === 409) {
-                setStatusMessage("Scan already in progress.")
+                setStatusMessage("Singularity Induction in progress.")
             } else if (res.ok) {
-                setStatusMessage("Scan started.")
+                setStatusMessage("Singularity Induction started.")
                 setIsScanning(true)
             } else {
-                setStatusMessage("Error starting scan.")
+                setStatusMessage("Error starting Singularity.")
             }
             fetchHistory()
         } catch (err) {
@@ -91,18 +90,18 @@ function App() {
 
     return (
         <div className="container">
-            <h1>AntiGravity Scanner (Advanced)</h1>
+            <h1>Aether-Titan v100 Infinity-Singularity</h1>
 
-            {/* V60.0 Sovereign Midnight Cyber Dashboard */}
+            {/* V100 Sovereign Midnight Cyber Dashboard */}
             <Dashboard />
 
             <div className="grid">
                 <div className="card control-panel">
-                    <h2>Control Center</h2>
+                    <h2>Sovereign Control Center</h2>
                     <div className="input-group">
                         <input
                             type="text"
-                            placeholder="Enter Target URL (e.g. https://testphp.vulnweb.com)"
+                            placeholder="Enter Target Intent Scope (e.g. global-infrastructure.io)"
                             value={targetUrl}
                             onChange={(e) => setTargetUrl(e.target.value)}
                             disabled={isScanning}
@@ -111,16 +110,16 @@ function App() {
 
                     <div className="actions">
                         <button onClick={startScan} disabled={isScanning} className="start-btn">
-                            {isScanning ? 'Scanning In Progress...' : '🚀 Launch Active Scan'}
+                            {isScanning ? 'INDUCING SINGULARITY...' : '🚀 INITIATE INFINITE-SCOPE STRIKE'}
                         </button>
                     </div>
                     {statusMessage && <p className="message">{statusMessage}</p>}
                 </div>
 
                 <div className="card console-card">
-                    <h2>Live Scan Console</h2>
+                    <h2>Live Singularity Console</h2>
                     <div className="console-window">
-                        {logs.length === 0 && <span className="console-placeholder">Waiting for scan tasks...</span>}
+                        {logs.length === 0 && <span className="console-placeholder">Awaiting Sovereign Commandments...</span>}
                         {logs.map((log, index) => (
                             <div key={index} className="log-entry">{log}</div>
                         ))}
@@ -130,7 +129,7 @@ function App() {
             </div>
 
             <div className="card full-width">
-                <h2>Scan History</h2>
+                <h2>Singularity History</h2>
                 <table>
                     <thead>
                         <tr>
@@ -148,7 +147,7 @@ function App() {
                                 <td className={scan.status.toLowerCase()}>{scan.status}</td>
                                 <td>
                                     {scan.status === 'Completed' && (
-                                        <button onClick={() => downloadReport(scan.id)}>Download PDF</button>
+                                        <button onClick={() => downloadReport(scan.id)}>Download ZKP Report</button>
                                     )}
                                 </td>
                             </tr>

@@ -41,7 +41,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-center border-b border-cyan-900 pb-4 mb-8">
                 <h1 className="text-2xl font-bold tracking-tighter flex items-center gap-3">
                     <Shield className="animate-pulse text-cyan-400" />
-                    ANTIGRAVITY // OMNI-HUNTER v60.0
+                    AETHER-TITAN // INFINITY-SINGULARITY v100.0
                 </h1>
                 <div className="flex gap-6 text-sm">
                     <span className="flex items-center gap-2"><Globe size={16} /> SWARM: ACTIVE</span>
