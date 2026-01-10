@@ -19,11 +19,13 @@ def health_check():
 def start_scan():
     data = request.json
     target_url = data.get('target_url')
+    scan_mode = data.get('scan_mode', 'Standard') # Default to Standard if not provided
     
     if not target_url:
         return jsonify({"status": "error", "message": "Target URL is required"}), 400
 
-    if scan_engine.scan_manager.start_scan(target_url):
+    if scan_engine.scan_manager.start_scan(target_url, scan_mode=scan_mode):
+        return jsonify({"status": "started", "message": f"Scan started on {target_url} (Mode: {scan_mode})"})
         return jsonify({"status": "started", "message": f"Scan started on {target_url}"})
     else:
         return jsonify({"status": "error", "message": "A scan is already in progress."}), 409

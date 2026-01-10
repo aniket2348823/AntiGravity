@@ -25,11 +25,11 @@ class ScanManager:
             "findings": self.current_findings
         }
 
-    def start_scan(self, target_url):
+    def start_scan(self, target_url, scan_mode="Standard"):
         if self.lock.acquire(blocking=False):
             self.scan_log = [] # Reset log
             self.current_findings = [] # Reset findings
-            self.current_scan_thread = threading.Thread(target=self._run_scan, args=(target_url.strip(),))
+            self.current_scan_thread = threading.Thread(target=self._run_scan, args=(target_url.strip(), scan_mode))
             self.current_scan_thread.start()
             return True
         return False
@@ -42,10 +42,10 @@ class ScanManager:
 
 
 
-    def _run_scan(self, target_url):
+    def _run_scan(self, target_url, scan_mode):
         scan_id = None
         try:
-            self._log(f"Initializing Antigravity Engine for {target_url}")
+            self._log(f"Initializing Antigravity Engine for {target_url} [Mode: {scan_mode}]")
             scan_id = db.add_scan(target_url) 
             
             # Callbacks to bridge to existing UI
@@ -64,7 +64,8 @@ class ScanManager:
             asyncio.run(titan.commence_singularity(
                 target_url, 
                 on_log=on_log_callback, 
-                on_finding=on_finding_callback
+                on_finding=on_finding_callback,
+                scan_mode=scan_mode
             ))
             
             # 2. Classic Orchestrator Mode (Real Network Recon - OPTIONAL if Singularity covers it)

@@ -9,19 +9,19 @@ class AetherTitanOmniscience:
     def __init__(self):
         self.core = None
 
-    async def commence_singularity(self, target_url, on_log=None, on_finding=None):
+    async def commence_singularity(self, target_url, on_log=None, on_finding=None, scan_mode="Standard"):
         """
         Launches the advanced Neural-Symbolic scan.
         """
         if on_log:
             on_log(f"[*] ACTIVATING AETHER TITAN OMNISCIENCE PROTOCOL v5000.0")
-            on_log(f"[*] Target Acquired: {target_url}")
+            on_log(f"[*] Target Acquired: {target_url} [Scan Mode: {scan_mode}]")
             on_log(f"[*] Initializing Neural Swarm...")
         
         self.core = SingularityCore(on_log=on_log, on_finding=on_finding)
         
         # Run the singularity event loop
-        await self.core.run(target_url)
+        await self.core.run(target_url, scan_mode=scan_mode)
         
         if on_log:
              on_log(f"[+] SINGULARITY EVENT CONCLUDED.")

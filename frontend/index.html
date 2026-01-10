@@ -441,9 +441,10 @@
               performance parameters for a new security assessment.</p>
           </div>
           <div class="flex gap-3">
-            <button
+            <button id="btn-scan-mode" onclick="toggleScanMode()" data-mode="Standard"
               class="group flex items-center justify-center gap-2 h-10 px-5 text-sm font-medium text-slate-900 dark:text-white bg-white dark:bg-surface-dark border border-[#e5e7eb] dark:border-surface-border hover:bg-gray-100 dark:hover:bg-surface-border rounded-lg transition-colors">
-              <span class="material-symbols-outlined text-[18px]">save</span> Save Template
+              <span class="material-symbols-outlined text-[18px]">bolt</span> <span id="lbl-scan-mode">Standard
+                Scan</span>
             </button>
             <button onclick="startScan()"
               class="group flex items-center justify-center gap-2 h-10 px-6 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg shadow-[0_0_15px_rgba(19,91,236,0.3)] transition-all">
@@ -470,8 +471,10 @@
                 <textarea id="target-input"
                   class="w-full h-48 md:h-64 bg-background-light dark:bg-background-dark border border-[#e5e7eb] dark:border-surface-border rounded-lg p-4 text-slate-900 dark:text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none placeholder:text-text-secondary/50"
                   placeholder="Enter Target URL (e.g. https://google.com)"></textarea>
-                <div class="absolute bottom-4 right-4 text-xs text-text-secondary bg-surface-dark/80 px-2 py-1 rounded">
-                  Single Target</div>
+                <div class="absolute bottom-4 right-4 flex gap-4 items-center">
+
+                  <div class="text-xs text-text-secondary bg-surface-dark/80 px-2 py-1 rounded">Single Target</div>
+                </div>
               </div>
             </div>
 
@@ -709,8 +712,26 @@
       }
     }
 
+    function toggleScanMode() {
+      const btn = document.getElementById('btn-scan-mode');
+      const lbl = document.getElementById('lbl-scan-mode');
+      if (btn.dataset.mode === "Standard") {
+        btn.dataset.mode = "Heavy";
+        lbl.innerText = "Heavy Scan"; // Renamed as requested
+        btn.classList.remove('bg-white', 'dark:bg-surface-dark', 'text-slate-900', 'dark:text-white');
+        btn.classList.add('bg-red-600', 'text-white', 'border-red-500'); // distinct style
+      } else {
+        btn.dataset.mode = "Standard";
+        lbl.innerText = "Standard Scan";
+        btn.classList.add('bg-white', 'dark:bg-surface-dark', 'text-slate-900', 'dark:text-white');
+        btn.classList.remove('bg-red-600', 'text-white', 'border-red-500');
+      }
+    }
+
     async function startScan() {
       const targetUrl = document.getElementById('target-input').value;
+      const scanMode = document.getElementById('btn-scan-mode').dataset.mode;
+
       if (!targetUrl) {
         alert("Please enter a target URL.");
         return;
@@ -719,12 +740,12 @@
         const res = await fetch('/api/scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ target_url: targetUrl })
+          body: JSON.stringify({ target_url: targetUrl, scan_mode: scanMode })
         });
         if (res.status === 409) {
           alert("Scan already in progress.");
         } else if (res.ok) {
-          alert("Scan started.");
+          alert(`Scan started in ${scanMode} Mode.`);
           switchView('dashboard');
           fetchStatus();
         } else {
