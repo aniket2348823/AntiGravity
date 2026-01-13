@@ -1,0 +1,7 @@
+ backend/antigravity/singularity_core.py | 126 +++--
+ backend/pdf_generator.py                |   9 +
+ backend/scan_engine.py                  |   6 +-
+ frontend/index.html                     | 784 +-------------------------------
+ frontend/src/App.jsx                    |  99 ++--
+ frontend/src/components/Dashboard.jsx   | 254 +++++++----
+ 6 files changed, 311 insertions(+), 967 deletions(-)

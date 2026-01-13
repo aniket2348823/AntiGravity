@@ -96,7 +96,7 @@ function App() {
             <Dashboard />
 
             <div className="grid">
-                <div className="card control-panel">
+                <div className="card control-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <h2>Sovereign Control Center</h2>
                     <div className="input-group">
                         <input

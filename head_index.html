@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Antigravity - Unified Security Platform</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#135bec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101622",
+            "surface-dark": "#1c1f27",
+            "surface-border": "#282e39",
+            "text-secondary": "#9da6b9"
+          },
+          fontFamily: {
+            "display": ["Space Grotesk", "sans-serif"],
+            "body": ["Noto Sans", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Global Styles & Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #101622;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #282e39;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b4354;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1;
+    }
+
+    /* Utility for hiding views */
+    .view-section {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    /* Animation for fade in */
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Specific styles from input codes */
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #135bec;
+      cursor: pointer;
+      margin-top: -6px;
+      box-shadow: 0 0 0 4px rgba(19, 91, 236, 0.2);
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: #282e39;
+      border-radius: 2px;
+    }
+
+    .code-scroll::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    .code-scroll::-webkit-scrollbar-track {
+      background: #1e232e;
+    }
+
+    .code-scroll::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-hidden h-screen flex">
+
+  <!-- === UNIFIED SIDEBAR === -->
+  <aside
+    class="w-64 h-full flex flex-col border-r border-[#e5e7eb] dark:border-[#282e39] bg-white dark:bg-[#111318] shrink-0 z-30 transition-all duration-300 hidden md:flex">
+    <div class="p-4 flex flex-col h-full justify-between">
+      <div class="flex flex-col gap-6">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 px-2">
+          <div class="bg-primary/20 flex items-center justify-center rounded-lg size-10 text-primary">
+            <span class="material-symbols-outlined text-2xl">radar</span>
+          </div>
+          <div class="flex flex-col">
+            <h1 class="text-lg font-bold leading-none dark:text-white text-slate-900">Antigravity</h1>
+            <p class="text-[#9da6b9] text-xs font-normal">v2.4.0 • Enterprise</p>
+          </div>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-1" id="sidebar-nav">
+          <button onclick="switchView('dashboard')"
+            class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary transition-colors text-left w-full"
+            data-target="dashboard">
+            <span class="material-symbols-outlined filled">dashboard</span>
+            <p class="text-sm font-medium">Dashboard</p>
+          </button>
+          <button onclick="switchView('new-scan')"
+            class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-[#64748b] dark:text-[#9da6b9] hover:bg-[#f1f5f9] dark:hover:bg-[#282e39] transition-colors text-left w-full"
+            data-target="new-scan">
+            <span class="material-symbols-outlined">add_circle</span>
+            <p class="text-sm font-medium">New Scan</p>
+          </button>
+          <button onclick="switchView('results')"
+            class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-[#64748b] dark:text-[#9da6b9] hover:bg-[#f1f5f9] dark:hover:bg-[#282e39] transition-colors text-left w-full"
+            data-target="results">
+            <span class="material-symbols-outlined">bug_report</span>
+            <p class="text-sm font-medium">Findings</p>
+          </button>
+          <button onclick="switchView('settings')"
+            class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-[#64748b] dark:text-[#9da6b9] hover:bg-[#f1f5f9] dark:hover:bg-[#282e39] transition-colors text-left w-full"
+            data-target="settings">
+            <span class="material-symbols-outlined">tune</span>
+            <p class="text-sm font-medium">Settings</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom User Profile -->
+      <div class="flex flex-col gap-2 border-t border-[#e5e7eb] dark:border-[#282e39] pt-4">
+        <a href="#"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg text-[#64748b] dark:text-[#9da6b9] hover:bg-[#f1f5f9] dark:hover:bg-[#282e39] transition-colors">
+          <span class="material-symbols-outlined">settings</span>
+          <p class="text-sm font-medium leading-normal">Settings</p>
+        </a>
+        <div class="flex items-center gap-3 px-3 py-2 rounded-lg">
+          <div class="size-8 rounded-full bg-cover bg-center"
+            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBAm9FhJPfwI-VOo9ozGqVjZmv9KWpBYMiFpnSvGBLHdUYHEx2aa32C7TGthEX1W8aP9yfPaPU4MJtMNeWsikiAVxnn66OZhKPtqedp85lztt2xQ8cDD24PWqF9LKpa6OOSHHDiyRb1AJKAFyMlcmekFmZEPd_TwaabO5pMX9sG30-1n_uFhxDPf5gheRCuCytLgohsiWQyawfLV6QeZqSxJ3iTAGG0nZKsEQM8E37_VtQmRdVMkYPwohnSBWYSjrIy650Q1KQLiEA");'>
+          </div>
+          <div class="flex flex-col">
+            <p class="text-sm font-medium dark:text-white text-slate-900 leading-none">Operator</p>
+            <p class="text-xs text-[#9da6b9]">SecOps Lead</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- === MAIN CONTENT WRAPPER === -->
+  <main class="flex-1 h-full overflow-hidden relative bg-background-light dark:bg-background-dark flex flex-col">
+
+    <!-- Mobile Header -->
+    <div
+      class="md:hidden flex items-center justify-between p-4 bg-white dark:bg-[#111318] border-b border-[#e5e7eb] dark:border-[#282e39]">
+      <div class="flex items-center gap-2">
+        <div class="bg-primary/20 flex items-center justify-center rounded-lg size-8 text-primary">
+          <span class="material-symbols-outlined text-xl">radar</span>
+        </div>
+        <h1 class="font-bold text-lg dark:text-white text-slate-900">Antigravity</h1>
+      </div>
+      <button class="text-slate-500 dark:text-slate-400">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+
+    <!-- 1. DASHBOARD VIEW (FROM CODE #1) -->
+    <section id="view-dashboard" class="view-section active fade-in overflow-y-auto h-full">
+      <header
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 px-8 py-6 sticky top-0 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm z-10 border-b border-[#e5e7eb] dark:border-[#282e39]">
+        <div class="flex flex-col gap-1">
+          <h1 class="text-3xl font-black leading-tight tracking-[-0.033em] text-slate-900 dark:text-white">Mission
+            Control</h1>
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+                id="system-status-ping"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" id="system-status-dot"></span>
+            </span>
+            <p class="text-[#64748b] dark:text-[#9da6b9] text-sm font-medium" id="system-status-text">System Nominal •
+              Ready</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 w-full md:w-auto">
+          <div class="relative hidden md:block w-64">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9da6b9]">
+              <span class="material-symbols-outlined text-[20px]">search</span>
+            </div>
+            <input
+              class="block w-full p-2.5 pl-10 text-sm rounded-lg bg-white dark:bg-[#1c212c] border border-[#e5e7eb] dark:border-[#282e39] placeholder-[#9da6b9] text-slate-900 dark:text-white focus:ring-primary focus:border-primary"
+              placeholder="Search target or ID..." type="text" />
+          </div>
+
+          <button onclick="switchView('new-scan')"
+            class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-bold py-2.5 px-5 rounded-lg transition-all shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-[20px]">add_circle</span>
+            <span>New Scan</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="p-8 max-w-[1600px] w-full mx-auto flex flex-col gap-8">
+        <!-- KPI Stats Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            class="flex flex-col justify-between p-5 rounded-xl border border-[#e5e7eb] dark:border-[#282e39] bg-white dark:bg-[#1c212c] shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+              <p class="text-[#64748b] dark:text-[#9da6b9] text-sm font-medium">Global Threat Level</p><span
+                class="material-symbols-outlined text-orange-500">warning</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-3xl font-bold text-slate-900 dark:text-white">Medium</p>
+                <p class="text-xs text-[#64748b] dark:text-[#9da6b9] mt-1">Elevated activity detected</p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col justify-between p-5 rounded-xl border border-[#e5e7eb] dark:border-[#282e39] bg-white dark:bg-[#1c212c] shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+              <p class="text-[#64748b] dark:text-[#9da6b9] text-sm font-medium">Critical Findings</p><span
+                class="material-symbols-outlined text-red-500">bug_report</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-3xl font-bold text-slate-900 dark:text-white">12</p>
+                <p class="text-emerald-500 text-sm font-medium flex items-center gap-1 mt-1"><span
+                    class="material-symbols-outlined text-sm">trending_down</span><span>-2 from yesterday</span></p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col justify-between p-5 rounded-xl border border-[#e5e7eb] dark:border-[#282e39] bg-white dark:bg-[#1c212c] shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+              <p class="text-[#64748b] dark:text-[#9da6b9] text-sm font-medium">Active Scans</p><span
+                class="material-symbols-outlined text-primary">radar</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-3xl font-bold text-slate-900 dark:text-white" id="active-scan-count">0</p>
+                <p class="text-xs text-[#64748b] dark:text-[#9da6b9] mt-1" id="active-scan-status">Idle</p>
+              </div>
+              <div class="flex gap-0.5 h-6 items-end">
+                <div class="w-1 bg-primary/20 h-2 rounded-full"></div>
+                <div class="w-1 bg-primary/40 h-3 rounded-full"></div>
+                <div class="w-1 bg-primary h-5 rounded-full"></div>
+                <div class="w-1 bg-primary/60 h-4 rounded-full"></div>
+                <div class="w-1 bg-primary/30 h-2 rounded-full"></div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col justify-between p-5 rounded-xl border border-[#e5e7eb] dark:border-[#282e39] bg-white dark:bg-[#1c212c] shadow-sm">
+            <div class="flex justify-between items-start mb-2">
+              <p class="text-[#64748b] dark:text-[#9da6b9] text-sm font-medium">API Uptime</p><span
+                class="material-symbols-outlined text-emerald-500">check_circle</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-3xl font-bold text-slate-900 dark:text-white">99.98%</p>
+                <p class="text-emerald-500 text-sm font-medium mt-1">Stable</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Left Column (2/3 width) -->
+          <div class="lg:col-span-2 flex flex-col gap-8">
+            <!-- Active Scans Section -->
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 dark:text-white">Live Operations</h2><button
+                  class="text-sm text-primary font-medium hover:underline">View All</button>
+              </div>
+              <div
+                class="bg-white dark:bg-[#1c212c] rounded-xl border border-[#e5e7eb] dark:border-[#282e39] overflow-hidden shadow-sm"
+                id="live-scan-container">
+                <div class="p-5 text-center text-[#64748b] dark:text-[#9da6b9]">No active scans.</div>
+              </div>
+            </div>
+
+            <!-- Vulnerability Overview Chart Area (Simulated) -->
+            <div class="flex flex-col gap-4">
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white">Vulnerability Distribution</h2>
+              <div
+                class="bg-white dark:bg-[#1c212c] rounded-xl border border-[#e5e7eb] dark:border-[#282e39] p-6 shadow-sm">
+                <div class="flex gap-4 items-end h-48 w-full justify-between px-2">
+                  <div class="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
+                    <div
+                      class="w-full max-w-[40px] bg-red-500/20 rounded-t-lg relative h-32 hover:bg-red-500/30 transition-colors border-t border-x border-red-500/30">
+                      <div class="absolute bottom-0 w-full bg-red-500 rounded-t-lg h-[70%]"></div>
+                    </div>
+                    <span class="text-xs font-bold text-[#64748b] dark:text-[#9da6b9]">Critical</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
+                    <div
+                      class="w-full max-w-[40px] bg-orange-500/20 rounded-t-lg relative h-40 hover:bg-orange-500/30 transition-colors border-t border-x border-orange-500/30">
+                      <div class="absolute bottom-0 w-full bg-orange-500 rounded-t-lg h-[60%]"></div>
+                    </div>
+                    <span class="text-xs font-bold text-[#64748b] dark:text-[#9da6b9]">High</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
+                    <div
+                      class="w-full max-w-[40px] bg-yellow-500/20 rounded-t-lg relative h-full hover:bg-yellow-500/30 transition-colors border-t border-x border-yellow-500/30">
+                      <div class="absolute bottom-0 w-full bg-yellow-500 rounded-t-lg h-[85%]"></div>
+                    </div>
+                    <span class="text-xs font-bold text-[#64748b] dark:text-[#9da6b9]">Medium</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
+                    <div
+                      class="w-full max-w-[40px] bg-blue-500/20 rounded-t-lg relative h-24 hover:bg-blue-500/30 transition-colors border-t border-x border-blue-500/30">
+                      <div class="absolute bottom-0 w-full bg-blue-500 rounded-t-lg h-[40%]"></div>
+                    </div>
+                    <span class="text-xs font-bold text-[#64748b] dark:text-[#9da6b9]">Low</span>
+                  </div>
+                  <div class="flex flex-col items-center gap-2 flex-1 group cursor-pointer">
+                    <div
+                      class="w-full max-w-[40px] bg-emerald-500/20 rounded-t-lg relative h-16 hover:bg-emerald-500/30 transition-colors border-t border-x border-emerald-500/30">
+                      <div class="absolute bottom-0 w-full bg-emerald-500 rounded-t-lg h-[90%]"></div>
+                    </div>
+                    <span class="text-xs font-bold text-[#64748b] dark:text-[#9da6b9]">Info</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column (1/3 width) -->
+          <div class="flex flex-col gap-8">
+            <!-- Quick Actions Card -->
+            <div
+              class="bg-cover bg-center rounded-xl overflow-hidden shadow-lg relative min-h-[200px] flex flex-col justify-end p-6 group"
+              data-alt="Abstract digital mesh network background in dark blue"
+              style='background-image: linear-gradient(180deg, rgba(16, 22, 34, 0.2) 0%, rgba(16, 22, 34, 0.95) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAfgyiI5FAMld_QCTMQXXcpHqgU6L1oqrnySc6e4XxjeMBN2YbYxi_AcjEr7RLpVF8uY5nRjYha3F8vW-01KBLrDzARu5I7rTDeU9viKYeP_JYAiuU8miK_w__pKz2k2d6PnMim0IYkxwmwpWJb-0012k-nzTEX-3-Y6DZUxqzgvWYC2fI3puk44KzHCq1UuvJVVM5kTDiZE6hJf1-HReWcudSRBYmZkdnSZqqFR3NzV7VAIR2OgRPfj38k77BVIDj0Ms0fhL3XaW0");'>
+              <div class="relative z-10">
+                <h3 class="text-2xl font-bold text-white mb-1">Target Assessment</h3>
+                <p class="text-gray-300 text-sm mb-4">Launch a new comprehensive security audit.</p>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="switchView('new-scan')"
+                    class="bg-primary hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1"><span
+                      class="material-symbols-outlined text-sm">rocket_launch</span> Quick Scan</button>
+                  <button onclick="switchView('new-scan')"
+                    class="bg-[#282e39]/80 backdrop-blur-md hover:bg-[#282e39] text-white text-xs font-bold py-2 px-3 rounded-lg transition-colors border border-white/10 flex items-center justify-center gap-1"><span
+                      class="material-symbols-outlined text-sm">tune</span> Custom</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node Health Mini-Widget -->
+            <div
+              class="bg-white dark:bg-[#1c212c] rounded-xl border border-[#e5e7eb] dark:border-[#282e39] p-5 shadow-sm">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2"><span
+                  class="material-symbols-outlined text-primary">dns</span> Scanner Nodes</h3>
+              <div class="grid grid-cols-4 gap-2">
+                <div class="flex flex-col items-center gap-1">
+                  <div class="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div><span
+                    class="text-[10px] text-[#64748b] dark:text-[#9da6b9] font-mono">N-01</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                  <div class="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div><span
+                    class="text-[10px] text-[#64748b] dark:text-[#9da6b9] font-mono">N-02</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                  <div class="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div><span
+                    class="text-[10px] text-[#64748b] dark:text-[#9da6b9] font-mono">N-03</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                  <div class="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div><span
+                    class="text-[10px] text-[#64748b] dark:text-[#9da6b9] font-mono">N-04</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. NEW SCAN CONFIG VIEW (FROM CODE #2) -->
+    <section id="view-new-scan" class="view-section fade-in overflow-y-auto h-full">
+      <div class="p-6 md:p-8 lg:p-10 max-w-[1440px] mx-auto w-full">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+          <div class="flex flex-col gap-2">
+            <h1 class="text-slate-900 dark:text-white text-4xl font-bold leading-tight tracking-tight">New Scan
+              Configuration</h1>
+            <p class="text-text-secondary text-base font-normal max-w-2xl">Configure target scope, modules, and
+              performance parameters for a new security assessment.</p>
+          </div>
+          <div class="flex gap-3">
+            <button id="btn-scan-mode" onclick="toggleScanMode()" data-mode="Standard"
+              class="group flex items-center justify-center gap-2 h-10 px-5 text-sm font-medium text-slate-900 dark:text-white bg-white dark:bg-surface-dark border border-[#e5e7eb] dark:border-surface-border hover:bg-gray-100 dark:hover:bg-surface-border rounded-lg transition-colors">
+              <span class="material-symbols-outlined text-[18px]">bolt</span> <span id="lbl-scan-mode">Standard
+                Scan</span>
+            </button>
+            <button onclick="startScan()"
+              class="group flex items-center justify-center gap-2 h-10 px-6 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg shadow-[0_0_15px_rgba(19,91,236,0.3)] transition-all">
+              <span class="material-symbols-outlined text-[20px]">rocket_launch</span> Launch Scan
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Left Column: Scope & Basics (8 cols) -->
+          <div class="lg:col-span-8 flex flex-col gap-8">
+            <!-- Target Scope Card -->
+            <div
+              class="bg-white dark:bg-surface-dark border border-[#e5e7eb] dark:border-surface-border rounded-xl p-6 shadow-sm flex flex-col h-full">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-slate-900 dark:text-white text-lg font-bold flex items-center gap-2"><span
+                    class="material-symbols-outlined text-primary">radar</span> Target Scope</h3>
+                <div class="flex gap-2"><button
+                    class="text-xs font-medium text-primary hover:text-white px-3 py-1 bg-primary/10 hover:bg-primary/20 rounded-full transition-colors">Import
+                    from file</button></div>
+              </div>
+              <div class="relative flex-1">
+                <textarea id="target-input"
+                  class="w-full h-48 md:h-64 bg-background-light dark:bg-background-dark border border-[#e5e7eb] dark:border-surface-border rounded-lg p-4 text-slate-900 dark:text-white font-mono text-sm leading-relaxed focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none placeholder:text-text-secondary/50"
+                  placeholder="Enter Target URL (e.g. https://google.com)"></textarea>
+                <div class="absolute bottom-4 right-4 flex gap-4 items-center">
+
+                  <div class="text-xs text-text-secondary bg-surface-dark/80 px-2 py-1 rounded">Single Target</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Settings & summary (4 cols) -->
+          <div class="lg:col-span-4 flex flex-col gap-6">
+            <!-- Estimation Widget -->
+            <div
+              class="bg-gradient-to-br from-surface-dark to-background-dark border border-[#e5e7eb] dark:border-surface-border rounded-xl p-6 shadow-sm relative overflow-hidden group text-white">
+              <div
+                class="absolute -right-10 -top-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all duration-500">
+              </div>
+              <h4 class="text-text-secondary text-xs uppercase tracking-wider font-semibold mb-2 relative z-10">
+                Estimated Duration</h4>
+              <div class="flex items-baseline gap-2 mb-4 relative z-10">
+                <span class="text-3xl font-bold">~1</span>
+                <span class="text-lg text-text-secondary">minute</span>
+              </div>
+              <div class="w-full bg-background-dark h-1.5 rounded-full mb-3 overflow-hidden">
+                <div class="bg-primary h-full rounded-full w-2/3"></div>
+              </div>
+              <p class="text-xs text-text-secondary relative z-10">Based on <span class="text-white">Active
+                  Modules</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SCAN RESULTS VIEW (FROM CODE #3) -->
+    <section id="view-results" class="view-section fade-in overflow-y-auto h-full">
+      <div class="p-6 lg:p-10 flex flex-col gap-8 max-w-[1600px] mx-auto w-full">
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-sm text-[#9da6b9]">
+          <a class="hover:text-primary transition-colors" href="#">Home</a>
+          <span class="material-symbols-outlined text-xs">chevron_right</span>
+          <a class="hover:text-primary transition-colors" href="#">Scans</a>
+          <span class="material-symbols-outlined text-xs">chevron_right</span>
+          <span class="text-slate-900 dark:text-white font-medium">History</span>
+        </nav>
+        <!-- Header Section -->
+        <div
+          class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-[#e5e7eb] dark:border-surface-border pb-8">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-3">
+              <h2 class="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Scan History</h2>
+            </div>
+            <p class="text-text-secondary text-base">Overview of all performed scans.</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="fetchHistory()"
+              class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-surface-border text-slate-900 dark:text-white border border-[#e5e7eb] dark:border-transparent hover:bg-gray-100 dark:hover:bg-[#323946] transition-colors">
+              <span class="material-symbols-outlined text-[20px]">refresh</span> <span
+                class="text-sm font-bold">Refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div
+          class="rounded-xl border border-[#e5e7eb] dark:border-surface-border bg-white dark:bg-[#151b26] overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-[#e5e7eb] dark:border-surface-border bg-gray-50 dark:bg-[#1a202c]">
+                  <th class="py-4 px-6 text-xs font-bold text-text-secondary uppercase tracking-wider w-20">ID</th>
+                  <th class="py-4 px-6 text-xs font-bold text-text-secondary uppercase tracking-wider">Target</th>
+                  <th class="py-4 px-6 text-xs font-bold text-text-secondary uppercase tracking-wider w-32">Status</th>
+                  <th class="py-4 px-6 text-xs font-bold text-text-secondary uppercase tracking-wider w-40">Time</th>
+                  <th class="py-4 px-6 text-xs font-bold text-text-secondary uppercase tracking-wider w-32">Report</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#e5e7eb] dark:divide-surface-border" id="history-table-body">
+                <tr>
+                  <td colspan="5" class="p-6 text-center text-text-secondary">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- === JAVASCRIPT LOGIC === -->
+  <script>
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.remove('active');
+      });
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.add('active');
+      }
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('bg-primary/10', 'text-primary');
+        btn.classList.add('text-[#64748b]', 'dark:text-[#9da6b9]');
+        if (btn.dataset.target === viewId) {
+          btn.classList.remove('text-[#64748b]', 'dark:text-[#9da6b9]');
+          btn.classList.add('bg-primary/10', 'text-primary');
+        }
+      });
+    }
+
+    /* --- ANTIGRAVITY BACKEND INTEGRATION --- */
+
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        const container = document.getElementById('live-scan-container');
+        const countEl = document.getElementById('active-scan-count');
+        const statusEl = document.getElementById('active-scan-status');
+        const dot = document.getElementById('system-status-dot');
+        const ping = document.getElementById('system-status-ping');
+
+        if (data.is_scanning) {
+          countEl.innerText = '1';
+          statusEl.innerText = 'Scanning...';
+          let logsHtml = '<div class="flex flex-col gap-1 p-4 font-mono text-xs h-full">';
+          if (data.current_findings && data.current_findings.length > 0) {
+            data.current_findings.forEach(f => {
+              let color = f.Severity === 'Critical' ? 'text-red-500' : 'text-green-500';
+              logsHtml += `<div class="${color} border-b border-gray-800 pb-1 mb-1">
+                                    <span class="font-bold">[${f.Type}]</span> 
+                                    <span class="text-gray-400">${f.Endpoint || 'Unknown'}</span>
+                                    <span class="float-right">${f.Severity}</span>
+                                </div>`;
+            });
+          } else {
+            logsHtml += '<div class="text-green-500 animate-pulse">Initializing Scan Vectors...</div>';
+          }
+          logsHtml += '</div>';
+
+          container.innerHTML = `
+                <div class="px-5 py-3 border-b border-[#e5e7eb] dark:border-[#282e39] bg-surface-dark flex justify-between items-center">
+                    <span class="text-xs font-bold text-primary">LIVE CONSOLE STREAM</span>
+                    <span class="animate-pulse flex h-2 w-2 rounded-full bg-green-500"></span>
+                </div>
+                <div class="overflow-y-auto bg-black border-t border-gray-800" style="height: 300px;">
+                    ${logsHtml}
+                </div>
+            `;
+          dot.classList.remove('bg-emerald-500'); dot.classList.add('bg-orange-500');
+          ping.classList.remove('bg-emerald-400'); ping.classList.add('bg-orange-400');
+        } else {
+          countEl.innerText = '0';
+          statusEl.innerText = 'Idle';
+          container.innerHTML = `<div class="p-5 text-center text-[#64748b] dark:text-[#9da6b9]">No active scans.</div>`;
+          dot.classList.add('bg-emerald-500'); dot.classList.remove('bg-orange-500');
+          ping.classList.add('bg-emerald-400'); ping.classList.remove('bg-orange-400');
+        }
+      } catch (err) {
+        console.error("Status fetch fail", err);
+      }
+    }
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/history');
+        const data = await res.json();
+        const tbody = document.getElementById('history-table-body');
+        tbody.innerHTML = '';
+
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-text-secondary">No scans found.</td></tr>';
+          return;
+        }
+
+        data.forEach(scan => {
+          const tr = document.createElement('tr');
+          tr.className = "group hover:bg-gray-50 dark:hover:bg-[#1f2633] transition-colors relative border-b border-[#e5e7eb] dark:border-surface-border";
+
+          const statusClass = scan.status === 'Completed' ? 'text-green-500' : (scan.status === 'Running' ? 'text-orange-500' : 'text-red-500');
+
+          tr.innerHTML = `
+                        <td class="py-4 px-6 text-sm text-[#5c6475] font-mono">${scan.id}</td>
+                        <td class="py-4 px-6 text-sm text-white">${scan.celery_id || 'Unknown'}</td> <!-- Using celery_id as URL holder based on previous logic -->
+                        <td class="py-4 px-6"><span class="text-sm font-bold ${statusClass}">${scan.status}</span></td>
+                        <td class="py-4 px-6 text-sm text-[#5c6475]">${new Date(scan.timestamp).toLocaleString()}</td>
+                        <td class="py-4 px-6">
+                            ${scan.status === 'Completed' ?
+              `<button onclick="downloadReport('${scan.id}')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors text-xs font-bold">
+                                    <span class="material-symbols-outlined text-[16px]">download</span> PDF
+                                </button>` : ''}
+                        </td>
+                    `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("History fetch fail", err);
+      }
+    }
+
+
+
+    async function downloadReport(scanId) {
+      try {
+        // 1. Fetch the data as a Blob first
+        const response = await fetch(`/api/report/${scanId}`);
+        if (!response.ok) throw new Error("Report generation failed");
+        const blob = await response.blob();
+        const filename = `report_${scanId}.pdf`;
+
+        // 2. Try the Modern "Save As" Picker (File System Access API)
+        // This guarantees a popup window asking where to save (User Priority #1).
+        if (window.showSaveFilePicker) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [{
+                description: 'PDF Document',
+                accept: { 'application/pdf': ['.pdf'] },
+              }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            return; // Success, operation complete
+          } catch (err) {
+            // Fail silently if user cancelled the picker
+            if (err.name === 'AbortError') return;
+            console.warn("Save picker failed/skipped, falling back", err);
+          }
+        }
+
+        // If showSaveFilePicker is not supported or failed, alert the user.
+        alert("Your browser does not support the File System Access API needed to save the report directly. Please try a modern browser like Chrome or Edge.");
+
+      } catch (err) {
+        console.error("Download Error:", err);
+        alert("Could not download report: " + err.message);
+      }
+    }
+
+    function toggleScanMode() {
+      const btn = document.getElementById('btn-scan-mode');
+      const lbl = document.getElementById('lbl-scan-mode');
+      if (btn.dataset.mode === "Standard") {
+        btn.dataset.mode = "Heavy";
+        lbl.innerText = "Heavy Scan"; // Renamed as requested
+        btn.classList.remove('bg-white', 'dark:bg-surface-dark', 'text-slate-900', 'dark:text-white');
+        btn.classList.add('bg-red-600', 'text-white', 'border-red-500'); // distinct style
+      } else {
+        btn.dataset.mode = "Standard";
+        lbl.innerText = "Standard Scan";
+        btn.classList.add('bg-white', 'dark:bg-surface-dark', 'text-slate-900', 'dark:text-white');
+        btn.classList.remove('bg-red-600', 'text-white', 'border-red-500');
+      }
+    }
+
+    async function startScan() {
+      const targetUrl = document.getElementById('target-input').value;
+      const scanMode = document.getElementById('btn-scan-mode').dataset.mode;
+
+      if (!targetUrl) {
+        alert("Please enter a target URL.");
+        return;
+      }
+      try {
+        const res = await fetch('/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target_url: targetUrl, scan_mode: scanMode })
+        });
+        if (res.status === 409) {
+          alert("Scan already in progress.");
+        } else if (res.ok) {
+          alert(`Scan started in ${scanMode} Mode.`);
+          switchView('dashboard');
+          fetchStatus();
+        } else {
+          alert("Error starting scan.");
+        }
+      } catch (err) {
+        alert("Network error.");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      switchView('dashboard');
+      fetchStatus();
+      fetchHistory();
+      setInterval(() => {
+        fetchStatus();
+        fetchHistory(); // Polling
+      }, 2000);
+    });
+  </script>
+</body>
+
+</html>

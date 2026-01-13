@@ -1,0 +1,24 @@
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   backend/antigravity/singularity_core.py
+	modified:   backend/pdf_generator.py
+	modified:   backend/scan_engine.py
+	modified:   frontend/index.html
+	modified:   frontend/src/App.jsx
+	modified:   frontend/src/components/Dashboard.jsx
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	backend/core/
+	check_counts.py
+	check_god_mode.py
+	frontend/public/test_verification.txt
+	git_log.txt
+	git_status.txt
+	verify_scans.py
+
+no changes added to commit (use "git add" and/or "git commit -a")

@@ -1,0 +1,33 @@
+068c304 HEAD@{0}: commit: Enhance AntiGravity Scanner with Aether Titan 2030-Tier features (Metrics, Traces, Reporting)
+9e05fa9 HEAD@{1}: commit: Implement Sovereign CVSS 4.0 Reporting Standard
+eec3f7b HEAD@{2}: commit: Upgrade to v100 Omega Absolute-Singularity
+1844bf8 HEAD@{3}: commit: Complete Project Sync: Pushing all components to The-Aether
+ab1364a HEAD@{4}: commit: Removed failing deployment workflow
+b05c0af HEAD@{5}: commit: Branding: Removed Hydra Global Swarm name
+2a9eb3f HEAD@{6}: commit: vInfinity-Ultimate: Added Realistic Time-Weighting
+c834d50 HEAD@{7}: commit: vInfinity-Ultimate: Deep Spectrum Upgrade
+5c29b6e HEAD@{8}: reset: moving to 5c29b6edfca2e5c0b07cd20653767c693d9f29f2
+16b929a HEAD@{9}: commit: Implement Fetch-Blob download pattern for reliable Save As dialog
+6665c24 HEAD@{10}: commit: Revert to original simple download method (window.location.href)
+6e8ddbc HEAD@{11}: commit: Implement forced PDF download via link click
+118a9eb HEAD@{12}: commit: Restore direct PDF download (open in new tab)
+6447b65 HEAD@{13}: pull --rebase origin main (finish): returning to refs/heads/main
+6447b65 HEAD@{14}: pull --rebase origin main (start): checkout 6447b6578b5668ecb27d6fa62feb18ebfbc91698
+9261a89 HEAD@{15}: commit: Fix API URL configuration and add logging
+288c0da HEAD@{16}: rebase (finish): returning to refs/heads/main
+288c0da HEAD@{17}: rebase (continue): Refined project structure for GitHub upload
+c5b0f14 HEAD@{18}: pull --rebase origin main (start): checkout c5b0f1451909ec6595d7eb3d3b7c8b555faf3f8d
+b46fc44 HEAD@{19}: commit: Refined project structure for GitHub upload
+6447b65 HEAD@{20}: commit: Restored Sovereign v110.0 Dashboard + Active Console, vInfinity Backend
+5c29b6e HEAD@{21}: commit: Finalize v60.0 Sovereign Report and Legacy Dashboard
+2e5439c HEAD@{22}: commit: Fix CORS: Allow all origins to enable Frontend-Backend communication
+d6021e4 HEAD@{23}: commit: Configure single worker to preserve in-memory scan state
+9d135f1 HEAD@{24}: commit: Add final project walkthrough documentation
+e62c9a4 HEAD@{25}: commit: Add root vercel.json to fix frontend deployment
+70527ea HEAD@{26}: commit: Configure frontend to auto-connect to Render backend
+46edd59 HEAD@{27}: commit: Fix 404 by adding root health check route
+99d3d77 HEAD@{28}: commit: Add deployment configuration for Render
+0e1c442 HEAD@{29}: commit: Implement Antigravity Autonomous Scanner
+e53afb2 HEAD@{30}: commit: Add Vercel SPA routing config
+d968b82 HEAD@{31}: commit: Initial commit of AntiGravity Scanner
+be23196 HEAD@{32}: commit (initial): Initial commit of AntiGravity Scanner

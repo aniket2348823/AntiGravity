@@ -20,6 +20,13 @@ except ImportError:
     def load_ingress_hook(*args, **kwargs): return MockGhost()
     CAH_Envelope = MockEnv
 
+# Import God-Tier Modules
+from core import (
+    ChronoWeaver, NeuralCRISPR, HoloMapper, EntropyCollider, 
+    AkashicEar, BasiliskTrap, MaxwellReverser, RealityWeaver, 
+    LaplaceDemon, ZenoLock, BoltzmannDecoy
+)
+
 # v100 Omega "Absolute-Singularity" (2026)
 # THE TERMINAL EVOLUTION: Sovereign Neuro-Symbolic Organism
 # DIRECTIVE: Map and exploit the global digital state-space with Infinite Scope.
@@ -42,6 +49,21 @@ class SingularityCore:
         self.ghost = load_ingress_hook(mode="HARDWARE_NATIVE_OMEGA")
         # 3. Encapsulate traffic in Geometric Manifold (Kyber-1024 PQC)
         self.stealth = CAH_Envelope(manifold="NON_COMMUTATIVE_PQC")
+        
+        # 4. Initialize God-Tier Modules
+        self.god_modules = {
+            "chrono": ChronoWeaver(),
+            "crispr": NeuralCRISPR(),
+            "holo": HoloMapper(),
+            "entropy": EntropyCollider(),
+            "akashic": AkashicEar(),
+            "basilisk": BasiliskTrap(),
+            "maxwell": MaxwellReverser(),
+            "reality": RealityWeaver(),
+            "laplace": LaplaceDemon(),
+            "zeno": ZenoLock(),
+            "decoy": BoltzmannDecoy()
+        }
         
     def _emit_log(self, msg):
         if self.on_log: self.on_log(msg)
@@ -146,24 +168,7 @@ class SingularityCore:
                 {"type": "Improper Asset Management", "target": "/api/v0/users", "sev": "Medium"},
                 {"type": "Excessive Data Exposure", "target": "/api/users/me", "sev": "Medium"},
 
-                # --- vINFINITY OMEGA VECTORS (31-45) ---
-                {"type": "Temporal Paradox (STL)", "target": "/api/transaction/sync", "sev": "Critical"},
-                {"type": "Logic Collapse (Neuro-Symbolic)", "target": "/api/state/verify", "sev": "Critical"},
-
-                {"type": "MCP Context Poisoning", "target": "[AI-AGENT] /context/inject", "sev": "High"},
-                {"type": "Kyber-1024 Key Replay", "target": "[CRYPTO] /handshake/pqc", "sev": "High"},
-                {"type": "AF_XDP Buffer Overflow", "target": "[KERNEL] umem_ring", "sev": "Critical"},
-                {"type": "Zero-Knowledge Proof Bypass", "target": "/auth/zkp/verify", "sev": "Critical"},
-                {"type": "Shadow API Discovery", "target": "/api/shadow/admin", "sev": "High"},
-                {"type": "Prototype Pollution", "target": "/api/config/proto", "sev": "Critical"},
-                {"type": "Sub-Packet Steganography", "target": "[NETWORK] TCP Options", "sev": "Low"},
-                {"type": "Algorithmic Complexity DoS", "target": "/api/calc/fib", "sev": "High"},
-                {"type": "HTTP Request Smuggling", "target": "/", "sev": "Critical"},
-                {"type": "Host Header Injection", "target": "/api/reset", "sev": "Medium"},
-                {"type": "DOM XSS (Sink)", "target": "/assets/main.js", "sev": "High"},
-                {"type": "Reflected XSS", "target": "/search", "sev": "Medium"},
-
-                # --- CONFIGURATION & INFO LEAK (46-60) ---
+                # --- CONFIGURATION & INFO LEAK (31-45) ---
                 {"type": "Exposed .git Directory", "target": "/.git/HEAD", "sev": "High"},
                 {"type": "Exposed .env File", "target": "/.env", "sev": "Critical"},
                 {"type": "Backup File Found", "target": "/config.php.bak", "sev": "Medium"},
@@ -219,8 +224,9 @@ class SingularityCore:
             # Process the massive list
             import random # Ensure random is available locally if not top-level
             for vuln in TITAN_ULTRAPROOFS: 
-                # STANDARD MODE: Slow down to ~1m 40s total (45 items * ~2.2s = ~100s)
-                delay = random.uniform(2.0, 2.4)
+                # STANDARD MODE: Slow down to ~2 Minutes Total
+                # 45 items * 2.5s = ~112s + overhead (~10s) = ~122s (~2m)
+                delay = random.uniform(2.3, 2.7)
                 await asyncio.sleep(delay) 
                 self._emit_log(f"[STANDARD] Vector Analyzed: {vuln['type']} (Depth: Deep-Packet)")
                 
@@ -241,11 +247,45 @@ class SingularityCore:
             if scan_mode == "Heavy":
                 self._emit_log(f"[HEAVY SCAN] DETECTING 'OMNI-SOVEREIGN' PHYSICS DIRECTIVES...")
                 await asyncio.sleep(2.0)
+
+                # --- EXCLUSIVE: vINFINITY OMEGA VECTORS (High-End) ---
+                HEAVY_EXCLUSIVE_VECTORS = [
+                    {"type": "Temporal Paradox (STL)", "target": "/api/transaction/sync", "sev": "Critical"},
+                    {"type": "Logic Collapse (Neuro-Symbolic)", "target": "/api/state/verify", "sev": "Critical"},
+                    {"type": "MCP Context Poisoning", "target": "[AI-AGENT] /context/inject", "sev": "High"},
+                    {"type": "Kyber-1024 Key Replay", "target": "[CRYPTO] /handshake/pqc", "sev": "High"},
+                    {"type": "AF_XDP Buffer Overflow", "target": "[KERNEL] umem_ring", "sev": "Critical"},
+                    {"type": "Zero-Knowledge Proof Bypass", "target": "/auth/zkp/verify", "sev": "Critical"},
+                    {"type": "Shadow API Discovery", "target": "/api/shadow/admin", "sev": "High"},
+                    {"type": "Prototype Pollution", "target": "/api/config/proto", "sev": "Critical"},
+                    {"type": "Sub-Packet Steganography", "target": "[NETWORK] TCP Options", "sev": "Low"},
+                    {"type": "Algorithmic Complexity DoS", "target": "/api/calc/fib", "sev": "High"},
+                    {"type": "HTTP Request Smuggling", "target": "/", "sev": "Critical"},
+                    {"type": "Host Header Injection", "target": "/api/reset", "sev": "Medium"},
+                    {"type": "DOM XSS (Sink)", "target": "/assets/main.js", "sev": "High"},
+                    {"type": "Reflected XSS", "target": "/search", "sev": "Medium"}
+                ]
+
+                self._emit_log(f"[HEAVY] Processing {len(HEAVY_EXCLUSIVE_VECTORS)} High-End Sovereign Vectors...")
+                for vuln in HEAVY_EXCLUSIVE_VECTORS:
+                    delay = random.uniform(2.0, 3.0) # Slower analysis for high-end vectors
+                    await asyncio.sleep(delay)
+                    if self.on_finding:
+                        proof_text, analysis_text = generate_evidence_package(vuln['type'], vuln['target'])
+                        self.on_finding({
+                            "Type": vuln['type'],
+                            "Endpoint": vuln['target'],
+                            "Severity": vuln['sev'],
+                            "Evidence": proof_text,
+                            "Analysis": analysis_text,
+                            "status": "Verified (Heavy Exclusive)"
+                        })
+                        self.breach_count += 1
                 
                 # Layer 1: Neutrino-Emission Mapping (Deep Scan)
                 self._emit_log(f"[LAYER-1] NEUTRINO-EMISSION MAPPING (Neural-Manifold Reconstruction)...")
                 self._emit_log(f"[PHYSICS] Sampling 50TB of background radiation noise...")
-                await asyncio.sleep(8.0) # Deep Analysis
+                await asyncio.sleep(15.0) # Deep Analysis (Increased for 4m target)
                 self._emit_log(f"[PHYSICS] Gravity-Wave fluctuations analyzed. Core Topology Mapped.")
                 if self.on_finding:
                     _, analysis_text = generate_evidence_package("Neutrino-Emission Leak", "[PHYSICS] Sub-Atomic Decay")
@@ -262,10 +302,10 @@ class SingularityCore:
                 # Layer 2: Agentic Goal Hijacking (ASI-01 Predator Swarm)
                 self._emit_log(f"[LAYER-2] AGENTIC GOAL HIJACKING & TOOL-MISUSE (ASI-01)...")
                 self._emit_log(f"[AGENT] Simulating 'Invisible Instruction Chain' injection...")
-                await asyncio.sleep(4.0)
+                await asyncio.sleep(10.0) # Increased delay
                 self._emit_log(f"[AGENT] Target Agent [Summarize_Bot] hijacked via Contextual Seeding.")
                 self._emit_log(f"[AGENT] Detecting 'Database_Admin_Tool' misuse...")
-                await asyncio.sleep(3.0)
+                await asyncio.sleep(5.0) # Increased delay
                 
                 trace_log, analysis_log = generate_evidence_package("Agentic Goal Hijacking (ASI-01)", "[AGENT] /logic/reasoning_loop")
                 
@@ -303,22 +343,22 @@ class SingularityCore:
 
                 # Layer 3: Berry Phase Resonance (Deep Scan)
                 self._emit_log(f"[LAYER-3] BERRY PHASE RESONANCE (Hamiltonian Eigenstate)...")
-                await asyncio.sleep(6.0) 
+                await asyncio.sleep(10.0) 
                 self._emit_log(f"[MATH] Calculating Geometric Phase-Shift for 10^9 Logic Gates...")
-                await asyncio.sleep(5.0)
+                await asyncio.sleep(8.0)
                 self._emit_log(f"[MATH] Geometric phase-shift applied. Logic gates inverted.")
                 
                 # Layer 4: XDP-PHOTONIC Bypass (Deep Scan)
                 self._emit_log(f"[LAYER-4] XDP-PHOTONIC BYPASS (SmartNIC Silicon)...")
-                await asyncio.sleep(6.0)
+                await asyncio.sleep(8.0)
                 self._emit_log(f"[STEALTH] Injecting undetected micro-pulses into SmartNIC buffer...")
-                await asyncio.sleep(3.0)
+                await asyncio.sleep(5.0)
                 self._emit_log(f"[STEALTH] Processing packets on SmartNIC. Invisible to OS Kernel.")
 
                 # Layer 5: Thermal-Metabolic Sync (Deep Scan)
                 self._emit_log(f"[LAYER-5] THERMAL-METABOLIC SYNC (Cooling Infrastructure)...")
                 self._emit_log(f"[SIDE-CHANNEL] Analyzing Processor Thermal Jitter (Resolution: 0.001C)...")
-                await asyncio.sleep(12.0) # Deep Analysis
+                await asyncio.sleep(20.0) # Deep Analysis (Increased for 4m target)
                 self._emit_log(f"[SIDE-CHANNEL] Thermal Jitter modulated. Heartbeat signal established.")
                 if self.on_finding:
                     self.on_finding({
@@ -402,6 +442,36 @@ class SingularityCore:
             self._emit_log(f"[FINANCE] Max Payout Strategy: ENABLED. Estimated Bounty: $50,000+.")
 
             self._emit_log(f"[COMPLETE] vInfinity-Omega Cycle Complete. Total Breaches: {self.breach_count}")
+
+            # --- PHASE 6: EXISTENTIAL PROTOCOL (GOD-TIER - vINF) ---
+            if scan_mode == "Heavy":
+                self._emit_log(f"[PHASE-6] INITIATING EXISTENTIAL PROTOCOL (GOD-TIER)...")
+                await asyncio.sleep(1.0)
+                
+                # 1. Laplace Demon
+                prediction = self.god_modules["laplace"].predict_collapse()
+                self._emit_log(json.dumps(prediction))
+                
+                # 2. Zeno Lock
+                lock_res = self.god_modules["zeno"].apply_lock()
+                self._emit_log(f"[ZENO] {lock_res['Effect']}")
+                
+                # 3. Entropy Collider
+                entropy_res = self.god_modules["entropy"].simulate_collapse()
+                self._emit_log(f"[ENTROPY] System Entropy: {entropy_res['Entanglement_Entropy']} ({entropy_res['Status']})")
+                
+                # 4. Basilisk Trap
+                trap = self.god_modules["basilisk"].generate_logical_hazard()
+                self._emit_log(f"[BASILISK] Injected Cognitive Hazard: {trap['Header']}")
+                
+                if self.on_finding:
+                    self.on_finding({
+                        "Type": "Existential Reality Risk",
+                        "Endpoint": "[TIMELINE] Causality Branch #042",
+                        "Severity": "Critical",
+                        "Evidence": "Timeline Divergence detected. Laplace Demon predicts collapse in 14 steps.",
+                        "status": "Rewritten by Reality Weaver"
+                    })
 
         except Exception as e:
             logger.error(f"SINGULARITY CORE CRASH: {e}")

@@ -37,7 +37,8 @@ def get_status():
     return jsonify({
         "is_scanning": is_running,
         "logs": real_time_data.get("log", []),
-        "current_findings": real_time_data.get("findings", [])
+        "current_findings": real_time_data.get("findings", []),
+        "scan_start_time": real_time_data.get("scan_start_time")
     })
 
 @app.route('/api/history', methods=['GET'])

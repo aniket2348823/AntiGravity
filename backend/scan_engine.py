@@ -14,6 +14,7 @@ class ScanManager:
         self.current_scan_thread = None
         self.scan_log = []
         self.current_findings = []
+        self.scan_start_time = None
 
     def is_scanning(self):
         return self.lock.locked()
@@ -22,13 +23,15 @@ class ScanManager:
         """Returns current log and findings for real-time UI updates"""
         return {
             "log": self.scan_log[-50:], # Return last 50 logs
-            "findings": self.current_findings
+            "findings": self.current_findings,
+            "scan_start_time": self.scan_start_time
         }
 
     def start_scan(self, target_url, scan_mode="Standard"):
         if self.lock.acquire(blocking=False):
             self.scan_log = [] # Reset log
             self.current_findings = [] # Reset findings
+            self.scan_start_time = time.time()
             self.current_scan_thread = threading.Thread(target=self._run_scan, args=(target_url.strip(), scan_mode))
             self.current_scan_thread.start()
             return True
@@ -95,5 +98,6 @@ class ScanManager:
         finally:
             self.lock.release()
             self.current_scan_thread = None
+            self.scan_start_time = None
 
 scan_manager = ScanManager()
